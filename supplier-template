@@ -1,0 +1,4 @@
+supplierName;supplierSku;novaboxSku;name;category;brand;price;oldPrice;stock;image;desc;status;sourceType;updatedAt
+Test Supplier;SUP-LED-001;LED-001;LED-светильник;Электроника;NovaBox;1290;1590;12;;Настольный светильник для работы, учёбы и дома.;active;supplier;2026-06-24
+Test Supplier;SUP-USB-001;USB-001;USB-хаб;Электроника;NovaBox;890;1190;8;;Компактный USB-хаб для ноутбука, ПК и рабочих устройств.;active;supplier;2026-06-24
+Test Supplier;SUP-PHONE-001;PHONE-001;Подставка для телефона;Аксессуары;NovaBox;490;690;20;;Удобная настольная подставка для смартфона.;active;supplier;2026-06-24
