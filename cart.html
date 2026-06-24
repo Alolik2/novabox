@@ -107,6 +107,7 @@ header{
 .item-meta{
     color:#aaa;
     font-size:14px;
+    line-height:1.5;
 }
 
 .item-actions{
@@ -126,6 +127,11 @@ header{
     color:#fff;
     cursor:pointer;
     font-size:18px;
+}
+
+.qty-btn:disabled{
+    opacity:.4;
+    cursor:not-allowed;
 }
 
 .qty-value{
@@ -254,6 +260,12 @@ header{
     color:#ffb3b3;
     font-size:14px;
     line-height:1.5;
+}
+
+.stock-warning{
+    color:#ffb3b3;
+    margin-top:8px;
+    font-size:14px;
 }
 
 .footer-links{
@@ -391,8 +403,18 @@ footer{
     © 2026 NovaBox · novaboxmarket.ru
 </footer>
 
+<script src="products.js"></script>
+
 <script>
 const ORDER_EMAIL = "i-by4kariov@yandex.ru";
+
+function getProducts(){
+    if(!Array.isArray(window.NOVABOX_PRODUCTS)){
+        return [];
+    }
+
+    return window.NOVABOX_PRODUCTS;
+}
 
 function getCart(){
     const raw = localStorage.getItem("novabox_cart");
@@ -402,8 +424,16 @@ function getCart(){
     }
 
     try{
-        const cart = JSON.parse(raw);
-        return Array.isArray(cart) ? cart : [];
+        const parsed = JSON.parse(raw);
+
+        if(!Array.isArray(parsed)){
+            return [];
+        }
+
+        return parsed.map(item => ({
+            id: Number(item.id),
+            qty: Math.max(1, Number(item.qty) || 1)
+        })).filter(item => item.id > 0);
     }catch(error){
         localStorage.removeItem("novabox_cart");
         return [];
@@ -419,7 +449,38 @@ function clearCart(){
 }
 
 function formatMoney(value){
-    return value.toLocaleString("ru-RU") + " ₽";
+    return Number(value).toLocaleString("ru-RU") + " ₽";
+}
+
+function findProduct(id){
+    return getProducts().find(product=>product.id === id);
+}
+
+function getResolvedCart(){
+    const cart = getCart();
+    const resolved = [];
+
+    cart.forEach(item=>{
+        const product = findProduct(item.id);
+
+        if(!product || product.stock <= 0){
+            return;
+        }
+
+        const safeQty = Math.min(item.qty, product.stock);
+
+        resolved.push({
+            id: product.id,
+            sku: product.sku,
+            name: product.name,
+            category: product.category,
+            price: product.price,
+            stock: product.stock,
+            qty: safeQty
+        });
+    });
+
+    return resolved;
 }
 
 function getCartTotal(cart){
@@ -427,35 +488,48 @@ function getCartTotal(cart){
 }
 
 function renderCart(){
-    const cart = getCart();
+    const originalCart = getCart();
+    const resolvedCart = getResolvedCart();
+
+    if(JSON.stringify(originalCart) !== JSON.stringify(resolvedCart.map(item=>({id:item.id, qty:item.qty})))){
+        saveCart(resolvedCart.map(item=>({id:item.id, qty:item.qty})));
+    }
+
     const list = document.getElementById("cartList");
     const totalBox = document.getElementById("totalPrice");
 
     list.innerHTML = "";
 
-    if(cart.length === 0){
+    if(resolvedCart.length === 0){
         list.innerHTML = '<div class="cart-empty">Корзина пустая. Вернись в каталог и добавь товары.</div>';
         totalBox.textContent = "0 ₽";
         return;
     }
 
-    cart.forEach(item=>{
+    resolvedCart.forEach(item=>{
         const row = document.createElement("div");
         row.className = "cart-item";
 
         const itemTotal = item.price * item.qty;
+        const maxReached = item.qty >= item.stock;
 
         row.innerHTML = `
             <div>
                 <div class="item-title">${item.name}</div>
-                <div class="item-meta">${formatMoney(item.price)} за 1 шт.</div>
+                <div class="item-meta">
+                    Артикул: ${item.sku}<br>
+                    ${formatMoney(item.price)} за 1 шт.<br>
+                    В наличии: ${item.stock} шт.
+                </div>
 
                 <div class="item-actions">
                     <button class="qty-btn" type="button" data-action="minus">−</button>
                     <span class="qty-value">${item.qty}</span>
-                    <button class="qty-btn" type="button" data-action="plus">+</button>
+                    <button class="qty-btn" type="button" data-action="plus" ${maxReached ? "disabled" : ""}>+</button>
                     <button class="remove" type="button">Удалить</button>
                 </div>
+
+                ${maxReached ? '<div class="stock-warning">Выбрано максимальное доступное количество.</div>' : ''}
             </div>
 
             <div class="item-price">${formatMoney(itemTotal)}</div>
@@ -476,12 +550,18 @@ function renderCart(){
         list.appendChild(row);
     });
 
-    totalBox.textContent = formatMoney(getCartTotal(cart));
+    totalBox.textContent = formatMoney(getCartTotal(resolvedCart));
 }
 
 function changeQty(id, delta){
+    const product = findProduct(id);
+
+    if(!product){
+        return;
+    }
+
     const cart = getCart();
-    const item = cart.find(product=>product.id === id);
+    const item = cart.find(cartItem=>cartItem.id === id);
 
     if(!item){
         return;
@@ -489,7 +569,11 @@ function changeQty(id, delta){
 
     item.qty += delta;
 
-    const updatedCart = cart.filter(product=>product.qty > 0);
+    if(item.qty > product.stock){
+        item.qty = product.stock;
+    }
+
+    const updatedCart = cart.filter(cartItem=>cartItem.qty > 0);
     saveCart(updatedCart);
     renderCart();
 }
@@ -503,7 +587,7 @@ function removeItem(id){
 function buildOrderText(cart){
     return cart.map(item=>{
         const sum = item.price * item.qty;
-        return `${item.name} — ${item.qty} шт. × ${formatMoney(item.price)} = ${formatMoney(sum)}`;
+        return `${item.name} / ${item.sku} — ${item.qty} шт. × ${formatMoney(item.price)} = ${formatMoney(sum)}`;
     }).join("\n");
 }
 
@@ -518,7 +602,7 @@ function setupForm(){
     document.getElementById("nextUrl").value = window.location.origin + "/cart.html?success=1";
 
     form.addEventListener("submit",(event)=>{
-        const cart = getCart();
+        const cart = getResolvedCart();
 
         if(cart.length === 0){
             event.preventDefault();
