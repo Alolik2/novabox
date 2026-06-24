@@ -377,12 +377,20 @@ footer{
 <script>
 let activeCategory = "Все";
 
-function getProducts(){
+function getAllProducts(){
     if(!Array.isArray(window.NOVABOX_PRODUCTS)){
         return [];
     }
 
     return window.NOVABOX_PRODUCTS;
+}
+
+function isProductActive(product){
+    return product && product.status === "active";
+}
+
+function getProducts(){
+    return getAllProducts().filter(isProductActive);
 }
 
 function getCart(){
@@ -414,8 +422,11 @@ function saveCart(cart){
 }
 
 function updateCartCount(){
-    const cart = getCart();
+    const products = getProducts();
+    const cart = getCart().filter(item => products.some(product => product.id === item.id));
     const count = cart.reduce((sum,item)=>sum + item.qty,0);
+
+    saveCart(cart);
     document.getElementById("cartCount").textContent = count;
 }
 
@@ -430,6 +441,11 @@ function showToast(text){
 }
 
 function addToCart(product){
+    if(!isProductActive(product)){
+        showToast("Товар недоступен");
+        return;
+    }
+
     if(product.stock <= 0){
         showToast("Товара нет в наличии");
         return;
