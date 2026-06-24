@@ -72,7 +72,7 @@ header{
     justify-content:space-between;
     gap:20px;
     align-items:center;
-    margin-bottom:25px;
+    margin-bottom:20px;
 }
 
 .catalog-top h2{
@@ -86,6 +86,29 @@ header{
     background:#111;
     color:#fff;
     width:280px;
+}
+
+.filters{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:25px;
+}
+
+.filter-btn{
+    border:1px solid #333;
+    background:#0d0d0d;
+    color:#ddd;
+    padding:10px 14px;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.filter-btn.active,
+.filter-btn:hover{
+    background:#fff;
+    color:#000;
 }
 
 .grid{
@@ -112,21 +135,63 @@ header{
     align-items:center;
     justify-content:center;
     color:#777;
+    overflow:hidden;
+}
+
+.image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
 }
 
 .product h3{
     font-size:20px;
 }
 
+.sku{
+    color:#777;
+    font-size:13px;
+}
+
 .desc{
     color:#aaa;
     line-height:1.4;
-    min-height:40px;
+    min-height:42px;
+}
+
+.meta{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    color:#aaa;
+    font-size:14px;
+}
+
+.stock-ok{
+    color:#a6ffb8;
+}
+
+.stock-empty{
+    color:#ff9c9c;
+}
+
+.price-row{
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
 }
 
 .price{
     font-size:24px;
     font-weight:800;
+}
+
+.old-price{
+    color:#777;
+    text-decoration:line-through;
+    font-size:15px;
+    margin-bottom:3px;
 }
 
 .btn{
@@ -141,6 +206,20 @@ header{
 
 .btn:hover{
     opacity:.85;
+}
+
+.btn:disabled{
+    background:#333;
+    color:#888;
+    cursor:not-allowed;
+}
+
+.empty-result{
+    color:#888;
+    border:1px solid #222;
+    border-radius:18px;
+    padding:30px;
+    background:#0d0d0d;
 }
 
 .cart-float{
@@ -197,6 +276,23 @@ header{
     z-index:60;
 }
 
+.footer-links{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+}
+
+.footer-links a{
+    color:#aaa;
+    text-decoration:none;
+}
+
+.footer-links a:hover{
+    color:#fff;
+}
+
 footer{
     border-top:1px solid #222;
     text-align:center;
@@ -236,7 +332,7 @@ footer{
     <nav class="nav">
         <a href="index.html">Каталог</a>
         <a href="cart.html">Корзина</a>
-        <a href="#contacts">Контакты</a>
+        <a href="privacy.html">Политика</a>
     </nav>
 </header>
 
@@ -250,6 +346,8 @@ footer{
         <h2>Популярные товары</h2>
         <input class="search" id="searchInput" type="text" placeholder="Поиск товара...">
     </div>
+
+    <div class="filters" id="categoryFilters"></div>
 
     <div class="grid" id="productGrid"></div>
 </section>
@@ -266,21 +364,26 @@ footer{
 
 <div class="toast" id="toast">Товар добавлен в корзину</div>
 
-<footer id="contacts">
+<footer>
+    <div class="footer-links">
+        <a href="privacy.html">Политика обработки персональных данных</a>
+        <a href="consent.html">Согласие на обработку персональных данных</a>
+    </div>
     © 2026 NovaBox · novaboxmarket.ru
 </footer>
 
+<script src="products.js"></script>
+
 <script>
-const products = [
-    {id:1,name:"LED-светильник",price:1290,desc:"Настольный светильник для работы и дома."},
-    {id:2,name:"USB-хаб",price:890,desc:"Компактный USB-хаб для ноутбука и ПК."},
-    {id:3,name:"Подставка для телефона",price:490,desc:"Удобная подставка для смартфона."},
-    {id:4,name:"Мини-увлажнитель",price:1490,desc:"Компактный увлажнитель воздуха."},
-    {id:5,name:"Ночник",price:790,desc:"Мягкий свет для спальни и рабочего стола."},
-    {id:6,name:"Коврик для мыши",price:690,desc:"Большой коврик для комфортной работы."},
-    {id:7,name:"Подставка для ноутбука",price:1690,desc:"Складная подставка для охлаждения ноутбука."},
-    {id:8,name:"Настольный штатив",price:1190,desc:"Штатив для съёмки, стримов и видео."}
-];
+let activeCategory = "Все";
+
+function getProducts(){
+    if(!Array.isArray(window.NOVABOX_PRODUCTS)){
+        return [];
+    }
+
+    return window.NOVABOX_PRODUCTS;
+}
 
 function getCart(){
     const raw = localStorage.getItem("novabox_cart");
@@ -290,8 +393,16 @@ function getCart(){
     }
 
     try{
-        const cart = JSON.parse(raw);
-        return Array.isArray(cart) ? cart : [];
+        const parsed = JSON.parse(raw);
+
+        if(!Array.isArray(parsed)){
+            return [];
+        }
+
+        return parsed.map(item => ({
+            id: Number(item.id),
+            qty: Math.max(1, Number(item.qty) || 1)
+        })).filter(item => item.id > 0);
     }catch(error){
         localStorage.removeItem("novabox_cart");
         return [];
@@ -308,8 +419,9 @@ function updateCartCount(){
     document.getElementById("cartCount").textContent = count;
 }
 
-function showToast(){
+function showToast(text){
     const toast = document.getElementById("toast");
+    toast.textContent = text;
     toast.style.display = "block";
 
     setTimeout(()=>{
@@ -318,34 +430,118 @@ function showToast(){
 }
 
 function addToCart(product){
+    if(product.stock <= 0){
+        showToast("Товара нет в наличии");
+        return;
+    }
+
     const cart = getCart();
     const existing = cart.find(item=>item.id === product.id);
 
     if(existing){
+        if(existing.qty >= product.stock){
+            showToast("Больше нет на складе");
+            return;
+        }
+
         existing.qty++;
     }else{
-        cart.push({...product,qty:1});
+        cart.push({id:product.id, qty:1});
     }
 
     saveCart(cart);
     updateCartCount();
-    showToast();
+    showToast("Товар добавлен в корзину");
 }
 
-function renderProducts(list){
+function formatMoney(value){
+    return Number(value).toLocaleString("ru-RU") + " ₽";
+}
+
+function createImageHtml(product){
+    if(product.image){
+        return `<img src="${product.image}" alt="${product.name}">`;
+    }
+
+    return "Фото товара";
+}
+
+function renderCategories(){
+    const filters = document.getElementById("categoryFilters");
+    const products = getProducts();
+    const categories = ["Все", ...new Set(products.map(product=>product.category))];
+
+    filters.innerHTML = "";
+
+    categories.forEach(category=>{
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "filter-btn" + (category === activeCategory ? " active" : "");
+        button.textContent = category;
+
+        button.addEventListener("click",()=>{
+            activeCategory = category;
+            renderCategories();
+            renderProducts();
+        });
+
+        filters.appendChild(button);
+    });
+}
+
+function getFilteredProducts(){
+    const searchValue = document.getElementById("searchInput").value.toLowerCase().trim();
+
+    return getProducts().filter(product=>{
+        const categoryMatch = activeCategory === "Все" || product.category === activeCategory;
+
+        const searchMatch =
+            product.name.toLowerCase().includes(searchValue) ||
+            product.desc.toLowerCase().includes(searchValue) ||
+            product.sku.toLowerCase().includes(searchValue) ||
+            product.category.toLowerCase().includes(searchValue);
+
+        return categoryMatch && searchMatch;
+    });
+}
+
+function renderProducts(){
     const grid = document.getElementById("productGrid");
+    const products = getFilteredProducts();
+
     grid.innerHTML = "";
 
-    list.forEach(product=>{
+    if(products.length === 0){
+        grid.innerHTML = '<div class="empty-result">Товары не найдены.</div>';
+        return;
+    }
+
+    products.forEach(product=>{
         const card = document.createElement("div");
         card.className = "product";
 
+        const stockClass = product.stock > 0 ? "stock-ok" : "stock-empty";
+        const stockText = product.stock > 0 ? `В наличии: ${product.stock} шт.` : "Нет в наличии";
+
         card.innerHTML = `
-            <div class="image">Фото товара</div>
+            <div class="image">${createImageHtml(product)}</div>
+            <div class="sku">Артикул: ${product.sku}</div>
             <h3>${product.name}</h3>
             <p class="desc">${product.desc}</p>
-            <div class="price">${product.price.toLocaleString("ru-RU")} ₽</div>
-            <button class="btn" type="button">В корзину</button>
+
+            <div class="meta">
+                <span>${product.category}</span>
+                <span class="${stockClass}">${stockText}</span>
+            </div>
+
+            <div class="price-row">
+                <div class="price">${formatMoney(product.price)}</div>
+                ${product.oldPrice ? `<div class="old-price">${formatMoney(product.oldPrice)}</div>` : ""}
+            </div>
+
+            <button class="btn" type="button" ${product.stock <= 0 ? "disabled" : ""}>
+                ${product.stock <= 0 ? "Нет в наличии" : "В корзину"}
+            </button>
         `;
 
         card.querySelector(".btn").addEventListener("click",()=>addToCart(product));
@@ -353,18 +549,10 @@ function renderProducts(list){
     });
 }
 
-document.getElementById("searchInput").addEventListener("input",(event)=>{
-    const value = event.target.value.toLowerCase().trim();
+document.getElementById("searchInput").addEventListener("input", renderProducts);
 
-    const filtered = products.filter(product =>
-        product.name.toLowerCase().includes(value) ||
-        product.desc.toLowerCase().includes(value)
-    );
-
-    renderProducts(filtered);
-});
-
-renderProducts(products);
+renderCategories();
+renderProducts();
 updateCartCount();
 </script>
 
