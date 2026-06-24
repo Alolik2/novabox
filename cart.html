@@ -408,12 +408,20 @@ footer{
 <script>
 const ORDER_EMAIL = "i-by4kariov@yandex.ru";
 
-function getProducts(){
+function getAllProducts(){
     if(!Array.isArray(window.NOVABOX_PRODUCTS)){
         return [];
     }
 
     return window.NOVABOX_PRODUCTS;
+}
+
+function isProductActive(product){
+    return product && product.status === "active";
+}
+
+function getProducts(){
+    return getAllProducts().filter(isProductActive);
 }
 
 function getCart(){
@@ -472,6 +480,7 @@ function getResolvedCart(){
         resolved.push({
             id: product.id,
             sku: product.sku,
+            supplierSku: product.supplierSku || "",
             name: product.name,
             category: product.category,
             price: product.price,
@@ -491,8 +500,10 @@ function renderCart(){
     const originalCart = getCart();
     const resolvedCart = getResolvedCart();
 
-    if(JSON.stringify(originalCart) !== JSON.stringify(resolvedCart.map(item=>({id:item.id, qty:item.qty})))){
-        saveCart(resolvedCart.map(item=>({id:item.id, qty:item.qty})));
+    const normalizedCart = resolvedCart.map(item=>({id:item.id, qty:item.qty}));
+
+    if(JSON.stringify(originalCart) !== JSON.stringify(normalizedCart)){
+        saveCart(normalizedCart);
     }
 
     const list = document.getElementById("cartList");
@@ -587,16 +598,12 @@ function removeItem(id){
 function buildOrderText(cart){
     return cart.map(item=>{
         const sum = item.price * item.qty;
-        return `${item.name} / ${item.sku} — ${item.qty} шт. × ${formatMoney(item.price)} = ${formatMoney(sum)}`;
+        return `${item.name} / ${item.sku} / supplierSku: ${item.supplierSku} — ${item.qty} шт. × ${formatMoney(item.price)} = ${formatMoney(sum)}`;
     }).join("\n");
 }
 
 function setupForm(){
     const form = document.getElementById("orderForm");
-
-    if(ORDER_EMAIL === "your-email@example.com"){
-        console.warn("Замени ORDER_EMAIL в cart.html на свою почту для заказов.");
-    }
 
     form.action = "https://formsubmit.co/" + ORDER_EMAIL;
     document.getElementById("nextUrl").value = window.location.origin + "/cart.html?success=1";
@@ -607,12 +614,6 @@ function setupForm(){
         if(cart.length === 0){
             event.preventDefault();
             alert("Корзина пустая.");
-            return;
-        }
-
-        if(ORDER_EMAIL === "your-email@example.com"){
-            event.preventDefault();
-            alert("Сначала замени ORDER_EMAIL в cart.html на свою почту для заказов.");
             return;
         }
 
