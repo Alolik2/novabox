@@ -114,6 +114,7 @@ header{
     align-items:center;
     gap:8px;
     margin-top:12px;
+    flex-wrap:wrap;
 }
 
 .qty-btn{
@@ -186,6 +187,34 @@ header{
     resize:vertical;
 }
 
+.checkbox-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:12px;
+    border:1px solid #222;
+    border-radius:12px;
+    background:#090909;
+}
+
+.checkbox-row input{
+    width:18px;
+    height:18px;
+    margin-top:3px;
+    flex-shrink:0;
+}
+
+.checkbox-row span{
+    color:#cfcfcf;
+    font-size:14px;
+    line-height:1.45;
+}
+
+.checkbox-row a{
+    color:#fff;
+    font-weight:700;
+}
+
 .btn{
     border:none;
     border-radius:12px;
@@ -225,6 +254,23 @@ header{
     color:#ffb3b3;
     font-size:14px;
     line-height:1.5;
+}
+
+.footer-links{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+}
+
+.footer-links a{
+    color:#aaa;
+    text-decoration:none;
+}
+
+.footer-links a:hover{
+    color:#fff;
 }
 
 footer{
@@ -269,6 +315,7 @@ footer{
     <nav class="nav">
         <a href="index.html">Каталог</a>
         <a href="cart.html">Корзина</a>
+        <a href="privacy.html">Политика</a>
     </nav>
 </header>
 
@@ -299,6 +346,7 @@ footer{
                 <input type="hidden" name="_next" id="nextUrl">
                 <input type="hidden" name="Состав заказа" id="orderDetails">
                 <input type="hidden" name="Итоговая сумма" id="orderTotal">
+                <input type="hidden" name="Согласие на обработку персональных данных" value="Пользователь поставил галочку согласия при оформлении заказа">
 
                 <label>
                     Ваше имя
@@ -315,6 +363,16 @@ footer{
                     <textarea name="Адрес доставки" id="customerAddress" placeholder="Город, улица, дом, квартира" required></textarea>
                 </label>
 
+                <label class="checkbox-row">
+                    <input id="personalDataConsent" type="checkbox" required>
+                    <span>
+                        Я согласен на обработку персональных данных и подтверждаю, что ознакомлен с
+                        <a href="privacy.html" target="_blank">Политикой обработки персональных данных</a>
+                        и
+                        <a href="consent.html" target="_blank">Согласием на обработку персональных данных</a>.
+                    </span>
+                </label>
+
                 <button class="btn" type="submit">Оформить заказ</button>
 
                 <p class="warning">
@@ -326,6 +384,10 @@ footer{
 </main>
 
 <footer>
+    <div class="footer-links">
+        <a href="privacy.html">Политика обработки персональных данных</a>
+        <a href="consent.html">Согласие на обработку персональных данных</a>
+    </div>
     © 2026 NovaBox · novaboxmarket.ru
 </footer>
 
@@ -467,6 +529,14 @@ function setupForm(){
         if(ORDER_EMAIL === "your-email@example.com"){
             event.preventDefault();
             alert("Сначала замени ORDER_EMAIL в cart.html на свою почту для заказов.");
+            return;
+        }
+
+        const consent = document.getElementById("personalDataConsent");
+
+        if(!consent.checked){
+            event.preventDefault();
+            alert("Нужно согласиться на обработку персональных данных.");
             return;
         }
 
