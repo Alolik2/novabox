@@ -330,7 +330,7 @@ footer{
 </footer>
 
 <script>
-const ORDER_EMAIL = "i-by4kariov@yandex.ru";
+const ORDER_EMAIL = "your-email@example.com";
 
 function getCart(){
     const raw = localStorage.getItem("novabox_cart");
@@ -448,7 +448,7 @@ function buildOrderText(cart){
 function setupForm(){
     const form = document.getElementById("orderForm");
 
-    if(ORDER_EMAIL === "i-by4kariov@yandex.ru"){
+    if(ORDER_EMAIL === "your-email@example.com"){
         console.warn("Замени ORDER_EMAIL в cart.html на свою почту для заказов.");
     }
 
@@ -464,7 +464,7 @@ function setupForm(){
             return;
         }
 
-        if(ORDER_EMAIL === "i-by4kariov@yandex.ru"){
+        if(ORDER_EMAIL === "your-email@example.com"){
             event.preventDefault();
             alert("Сначала замени ORDER_EMAIL в cart.html на свою почту для заказов.");
             return;
