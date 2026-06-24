@@ -4,53 +4,240 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NovaBox — каталог</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#050505;color:#fff;font-family:Arial,Helvetica,sans-serif}
-header{border-bottom:1px solid #222;padding:20px 40px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:36px;font-weight:800}
-.nav{display:flex;gap:20px;color:#bbb}
-.hero{text-align:center;padding:60px 20px}
-.hero h1{font-size:52px;margin-bottom:15px}
-.hero p{font-size:20px;color:#aaa}
-.catalog{max-width:1200px;margin:0 auto;padding:20px}
-.catalog-top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:25px}
-.search{padding:14px 18px;border-radius:12px;border:1px solid #333;background:#111;color:#fff;width:280px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
-.product{background:#0d0d0d;border:1px solid #222;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px}
-.image{height:170px;border-radius:14px;background:linear-gradient(135deg,#1a1a1a,#333);display:flex;align-items:center;justify-content:center;color:#777}
-.desc{color:#aaa;line-height:1.4;min-height:40px}
-.price{font-size:24px;font-weight:800}
-.btn{border:none;border-radius:12px;padding:14px;background:#fff;color:#000;font-weight:800;cursor:pointer}
-.btn:hover{opacity:.85}
-.cart-panel{max-width:1200px;margin:40px auto;padding:20px}
-.cart-box{background:#0d0d0d;border:1px solid #222;border-radius:18px;padding:25px}
-.cart-item{display:flex;justify-content:space-between;gap:15px;border-bottom:1px solid #222;padding:14px 0}
-.remove{background:#222;color:#fff;border:1px solid #444;border-radius:10px;padding:8px 12px;cursor:pointer}
-.total{font-size:26px;font-weight:800;margin-top:20px}
-.order-form{display:grid;gap:12px;margin-top:25px}
-.order-form input,.order-form textarea{padding:14px;border-radius:12px;border:1px solid #333;background:#111;color:#fff}
-.order-form textarea{min-height:90px;resize:vertical}
-.success{display:none;margin-top:20px;padding:18px;border-radius:14px;background:#102916;color:#a6ffb8}
-footer{border-top:1px solid #222;text-align:center;padding:30px;color:#777;margin-top:80px}
+
+body{
+    background:#050505;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+header{
+    border-bottom:1px solid #222;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    background:#050505;
+    z-index:10;
+}
+
+.logo{
+    font-size:36px;
+    font-weight:800;
+}
+
+.nav{
+    display:flex;
+    gap:20px;
+    color:#bbb;
+}
+
+.nav a{
+    color:#bbb;
+    text-decoration:none;
+}
+
+.nav a:hover{
+    color:#fff;
+}
+
+.hero{
+    text-align:center;
+    padding:70px 20px 50px;
+}
+
+.hero h1{
+    font-size:56px;
+    margin-bottom:15px;
+}
+
+.hero p{
+    font-size:20px;
+    color:#aaa;
+}
+
+.catalog{
+    max-width:1200px;
+    margin:0 auto;
+    padding:20px;
+}
+
+.catalog-top{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.catalog-top h2{
+    font-size:36px;
+}
+
+.search{
+    padding:14px 18px;
+    border-radius:12px;
+    border:1px solid #333;
+    background:#111;
+    color:#fff;
+    width:280px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:20px;
+}
+
+.product{
+    background:#0d0d0d;
+    border:1px solid #222;
+    border-radius:18px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.image{
+    height:170px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#1a1a1a,#333);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#777;
+}
+
+.product h3{
+    font-size:20px;
+}
+
+.desc{
+    color:#aaa;
+    line-height:1.4;
+    min-height:40px;
+}
+
+.price{
+    font-size:24px;
+    font-weight:800;
+}
+
+.btn{
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    background:#fff;
+    color:#000;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.btn:hover{
+    opacity:.85;
+}
+
+.cart-float{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:#fff;
+    color:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    box-shadow:0 12px 35px rgba(0,0,0,.45);
+    z-index:50;
+}
+
+.cart-float svg{
+    width:30px;
+    height:30px;
+}
+
+.cart-count{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    min-width:24px;
+    height:24px;
+    padding:0 6px;
+    border-radius:999px;
+    background:#ff3b3b;
+    color:#fff;
+    font-size:13px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid #050505;
+}
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:100px;
+    transform:translateX(-50%);
+    background:#fff;
+    color:#000;
+    padding:14px 18px;
+    border-radius:12px;
+    font-weight:800;
+    display:none;
+    z-index:60;
+}
+
+footer{
+    border-top:1px solid #222;
+    text-align:center;
+    padding:30px;
+    color:#777;
+    margin-top:80px;
+}
+
 @media(max-width:700px){
-header{padding:18px;flex-direction:column;gap:12px}
-.hero h1{font-size:40px}
-.catalog-top{flex-direction:column;align-items:stretch}
-.search{width:100%}
-.cart-item{flex-direction:column}
+    header{
+        padding:18px;
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .hero h1{
+        font-size:40px;
+    }
+
+    .catalog-top{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .search{
+        width:100%;
+    }
 }
 </style>
 </head>
+
 <body>
 
 <header>
     <div class="logo">NovaBox</div>
-    <div class="nav">
-        <span>Каталог</span>
-        <span>Корзина</span>
-        <span>Контакты</span>
-    </div>
+
+    <nav class="nav">
+        <a href="index.html">Каталог</a>
+        <a href="cart.html">Корзина</a>
+        <a href="#contacts">Контакты</a>
+    </nav>
 </header>
 
 <section class="hero">
@@ -63,29 +250,25 @@ header{padding:18px;flex-direction:column;gap:12px}
         <h2>Популярные товары</h2>
         <input class="search" id="searchInput" type="text" placeholder="Поиск товара...">
     </div>
+
     <div class="grid" id="productGrid"></div>
 </section>
 
-<section class="cart-panel">
-    <div class="cart-box">
-        <h2>Корзина</h2>
-        <div id="cartItems"></div>
-        <div class="total" id="cartTotal">Итого: 0 ₽</div>
+<a class="cart-float" href="cart.html" aria-label="Открыть корзину">
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M7 7h14l-2 8H9L7 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M7 7 6.2 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="10" cy="20" r="1.5" fill="currentColor"/>
+        <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
+    </svg>
+    <span class="cart-count" id="cartCount">0</span>
+</a>
 
-        <form class="order-form" id="orderForm">
-            <input id="customerName" type="text" placeholder="Ваше имя" required>
-            <input id="customerPhone" type="tel" placeholder="Телефон" required>
-            <textarea id="customerAddress" placeholder="Адрес доставки" required></textarea>
-            <button class="btn" type="submit">Оформить заказ</button>
-        </form>
+<div class="toast" id="toast">Товар добавлен в корзину</div>
 
-        <div class="success" id="successBox">
-            Заказ создан в тестовом режиме. Дальше подключим отправку заказов в админку.
-        </div>
-    </div>
-</section>
-
-<footer>© 2026 NovaBox</footer>
+<footer id="contacts">
+    © 2026 NovaBox · novaboxmarket.ru
+</footer>
 
 <script>
 const products = [
@@ -99,96 +282,90 @@ const products = [
     {id:8,name:"Настольный штатив",price:1190,desc:"Штатив для съёмки, стримов и видео."}
 ];
 
-let cart = [];
+function getCart(){
+    const raw = localStorage.getItem("novabox_cart");
+
+    if(!raw){
+        return [];
+    }
+
+    try{
+        const cart = JSON.parse(raw);
+        return Array.isArray(cart) ? cart : [];
+    }catch(error){
+        localStorage.removeItem("novabox_cart");
+        return [];
+    }
+}
+
+function saveCart(cart){
+    localStorage.setItem("novabox_cart", JSON.stringify(cart));
+}
+
+function updateCartCount(){
+    const cart = getCart();
+    const count = cart.reduce((sum,item)=>sum + item.qty,0);
+    document.getElementById("cartCount").textContent = count;
+}
+
+function showToast(){
+    const toast = document.getElementById("toast");
+    toast.style.display = "block";
+
+    setTimeout(()=>{
+        toast.style.display = "none";
+    },1200);
+}
+
+function addToCart(product){
+    const cart = getCart();
+    const existing = cart.find(item=>item.id === product.id);
+
+    if(existing){
+        existing.qty++;
+    }else{
+        cart.push({...product,qty:1});
+    }
+
+    saveCart(cart);
+    updateCartCount();
+    showToast();
+}
 
 function renderProducts(list){
-    const grid=document.getElementById("productGrid");
-    grid.innerHTML="";
+    const grid = document.getElementById("productGrid");
+    grid.innerHTML = "";
+
     list.forEach(product=>{
-        const card=document.createElement("div");
-        card.className="product";
-        card.innerHTML=`
+        const card = document.createElement("div");
+        card.className = "product";
+
+        card.innerHTML = `
             <div class="image">Фото товара</div>
             <h3>${product.name}</h3>
             <p class="desc">${product.desc}</p>
             <div class="price">${product.price.toLocaleString("ru-RU")} ₽</div>
-            <button class="btn">В корзину</button>
+            <button class="btn" type="button">В корзину</button>
         `;
+
         card.querySelector(".btn").addEventListener("click",()=>addToCart(product));
         grid.appendChild(card);
     });
 }
 
-function addToCart(product){
-    const existing=cart.find(item=>item.id===product.id);
-    if(existing){existing.qty++;}
-    else{cart.push({...product,qty:1});}
-    renderCart();
-}
-
-function removeFromCart(id){
-    cart=cart.filter(item=>item.id!==id);
-    renderCart();
-}
-
-function renderCart(){
-    const box=document.getElementById("cartItems");
-    const totalBox=document.getElementById("cartTotal");
-    box.innerHTML="";
-
-    if(cart.length===0){
-        box.innerHTML='<p style="color:#888;margin-top:15px;">Корзина пустая.</p>';
-    }
-
-    let total=0;
-
-    cart.forEach(item=>{
-        const sum=item.price*item.qty;
-        total+=sum;
-
-        const row=document.createElement("div");
-        row.className="cart-item";
-        row.innerHTML=`
-            <div>
-                <strong>${item.name}</strong><br>
-                <span style="color:#aaa;">${item.qty} шт. × ${item.price.toLocaleString("ru-RU")} ₽</span>
-            </div>
-            <div>
-                <strong>${sum.toLocaleString("ru-RU")} ₽</strong>
-                <button class="remove">Удалить</button>
-            </div>
-        `;
-        row.querySelector(".remove").addEventListener("click",()=>removeFromCart(item.id));
-        box.appendChild(row);
-    });
-
-    totalBox.textContent="Итого: "+total.toLocaleString("ru-RU")+" ₽";
-}
-
 document.getElementById("searchInput").addEventListener("input",(event)=>{
-    const value=event.target.value.toLowerCase();
-    renderProducts(products.filter(product=>
+    const value = event.target.value.toLowerCase().trim();
+
+    const filtered = products.filter(product =>
         product.name.toLowerCase().includes(value) ||
         product.desc.toLowerCase().includes(value)
-    ));
-});
+    );
 
-document.getElementById("orderForm").addEventListener("submit",(event)=>{
-    event.preventDefault();
-
-    if(cart.length===0){
-        alert("Корзина пустая.");
-        return;
-    }
-
-    document.getElementById("successBox").style.display="block";
-    cart=[];
-    renderCart();
-    event.target.reset();
+    renderProducts(filtered);
 });
 
 renderProducts(products);
-renderCart();
+updateCartCount();
 </script>
 
 </body>
