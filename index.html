@@ -3,238 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaBox</title>
-
+<title>NovaBox — каталог</title>
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    background:#050505;
-    color:#ffffff;
-    font-family:Arial, Helvetica, sans-serif;
-}
-
-header{
-    border-bottom:1px solid #222;
-    padding:20px 40px;
-}
-
-.logo{
-    font-size:40px;
-    font-weight:700;
-}
-
-.hero{
-    min-height:70vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    padding:40px;
-}
-
-.hero h1{
-    font-size:72px;
-    margin-bottom:20px;
-}
-
-.hero p{
-    font-size:24px;
-    color:#bdbdbd;
-    max-width:800px;
-    margin-bottom:40px;
-}
-
-.button{
-    display:inline-block;
-    padding:18px 40px;
-    background:white;
-    color:black;
-    text-decoration:none;
-    border-radius:12px;
-    font-weight:bold;
-    transition:0.2s;
-}
-
-.button:hover{
-    transform:translateY(-2px);
-}
-
-.features{
-    max-width:1200px;
-    margin:0 auto;
-    padding:80px 20px;
-}
-
-.features-title{
-    text-align:center;
-    font-size:42px;
-    margin-bottom:40px;
-}
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-}
-
-.card{
-    border:1px solid #222;
-    border-radius:16px;
-    padding:30px;
-    background:#0d0d0d;
-}
-
-.card h3{
-    margin-bottom:15px;
-}
-
-.card p{
-    color:#bdbdbd;
-    line-height:1.6;
-}
-
-.categories{
-    max-width:1200px;
-    margin:0 auto;
-    padding:0 20px 80px;
-}
-
-.categories-title{
-    text-align:center;
-    font-size:42px;
-    margin-bottom:40px;
-}
-
-.category-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-}
-
-.category{
-    border:1px solid #222;
-    border-radius:16px;
-    padding:40px;
-    text-align:center;
-    background:#0d0d0d;
-    font-size:22px;
-    font-weight:bold;
-}
-
-footer{
-    border-top:1px solid #222;
-    text-align:center;
-    padding:30px;
-    color:#888;
-}
-
-@media(max-width:768px){
-
-    .logo{
-        font-size:32px;
-    }
-
-    .hero h1{
-        font-size:48px;
-    }
-
-    .hero p{
-        font-size:18px;
-    }
-
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050505;color:#fff;font-family:Arial,Helvetica,sans-serif}
+header{border-bottom:1px solid #222;padding:20px 40px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:36px;font-weight:800}
+.nav{display:flex;gap:20px;color:#bbb}
+.hero{text-align:center;padding:70px 20px}
+.hero h1{font-size:56px;margin-bottom:15px}
+.hero p{font-size:20px;color:#aaa}
+.catalog{max-width:1200px;margin:0 auto;padding:20px}
+.catalog-top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:25px}
+.catalog-top h2{font-size:36px}
+.search{padding:14px 18px;border-radius:12px;border:1px solid #333;background:#111;color:#fff;width:280px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+.product{background:#0d0d0d;border:1px solid #222;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.image{height:170px;border-radius:14px;background:linear-gradient(135deg,#1a1a1a,#333);display:flex;align-items:center;justify-content:center;color:#777;font-size:18px}
+.product h3{font-size:20px}
+.desc{color:#aaa;line-height:1.4;min-height:40px}
+.price{font-size:24px;font-weight:800}
+.btn{border:none;border-radius:12px;padding:14px;background:#fff;color:#000;font-weight:800;cursor:pointer}
+.btn:hover{opacity:.85}
+.cart{position:fixed;right:20px;bottom:20px;background:#fff;color:#000;border-radius:18px;padding:18px 22px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+footer{border-top:1px solid #222;text-align:center;padding:30px;color:#777;margin-top:80px}
+@media(max-width:700px){
+header{padding:18px;flex-direction:column;gap:12px}
+.hero h1{font-size:42px}
+.catalog-top{flex-direction:column;align-items:stretch}
+.search{width:100%}
 }
 </style>
 </head>
-
 <body>
 
 <header>
     <div class="logo">NovaBox</div>
+    <div class="nav">
+        <span>Каталог</span>
+        <span>Доставка</span>
+        <span>Контакты</span>
+    </div>
 </header>
 
 <section class="hero">
-    <h1>NovaBox</h1>
-
-    <p>
-        Интернет-магазин товаров для дома, техники,
-        электроники и удобной жизни.
-    </p>
-
-    <a href="#" class="button">
-        Каталог скоро откроется
-    </a>
+    <h1>Каталог NovaBox</h1>
+    <p>Первые товары для тестового запуска интернет-магазина.</p>
 </section>
 
-<section class="features">
-
-    <h2 class="features-title">
-        Почему NovaBox
-    </h2>
-
-    <div class="cards">
-
-        <div class="card">
-            <h3>Быстрая доставка</h3>
-            <p>
-                Отправка заказов по всей России.
-            </p>
-        </div>
-
-        <div class="card">
-            <h3>Проверенные товары</h3>
-            <p>
-                Подбираем только качественные товары.
-            </p>
-        </div>
-
-        <div class="card">
-            <h3>Удобная оплата</h3>
-            <p>
-                Банковские карты и современные способы оплаты.
-            </p>
-        </div>
-
+<section class="catalog">
+    <div class="catalog-top">
+        <h2>Популярные товары</h2>
+        <input class="search" id="searchInput" type="text" placeholder="Поиск товара...">
     </div>
 
+    <div class="grid" id="productGrid"></div>
 </section>
 
-<section class="categories">
+<div class="cart" id="cartBox">Корзина: 0</div>
 
-    <h2 class="categories-title">
-        Основные категории
-    </h2>
+<footer>© 2026 NovaBox</footer>
 
-    <div class="category-grid">
+<script>
+const products = [
+    {
+        name: "LED-светильник",
+        price: 1290,
+        desc: "Настольный светильник для работы и дома."
+    },
+    {
+        name: "USB-хаб",
+        price: 890,
+        desc: "Компактный USB-хаб для ноутбука и ПК."
+    },
+    {
+        name: "Подставка для телефона",
+        price: 490,
+        desc: "Удобная подставка для смартфона."
+    },
+    {
+        name: "Мини-увлажнитель",
+        price: 1490,
+        desc: "Компактный увлажнитель воздуха."
+    },
+    {
+        name: "Ночник",
+        price: 790,
+        desc: "Мягкий свет для спальни и рабочего стола."
+    },
+    {
+        name: "Коврик для мыши",
+        price: 690,
+        desc: "Большой коврик для комфортной работы."
+    },
+    {
+        name: "Подставка для ноутбука",
+        price: 1690,
+        desc: "Складная подставка для охлаждения ноутбука."
+    },
+    {
+        name: "Настольный штатив",
+        price: 1190,
+        desc: "Штатив для съёмки, стримов и видео."
+    }
+];
 
-        <div class="category">
-            Электроника
-        </div>
+let cartCount = 0;
 
-        <div class="category">
-            Техника для дома
-        </div>
+function renderProducts(list) {
+    const grid = document.getElementById("productGrid");
+    grid.innerHTML = "";
 
-        <div class="category">
-            Товары для жизни
-        </div>
+    list.forEach((product) => {
+        const card = document.createElement("div");
+        card.className = "product";
 
-        <div class="category">
-            Новинки
-        </div>
+        card.innerHTML = `
+            <div class="image">Фото товара</div>
+            <h3>${product.name}</h3>
+            <p class="desc">${product.desc}</p>
+            <div class="price">${product.price.toLocaleString("ru-RU")} ₽</div>
+            <button class="btn">В корзину</button>
+        `;
 
-    </div>
+        card.querySelector(".btn").addEventListener("click", () => {
+            cartCount++;
+            document.getElementById("cartBox").textContent = "Корзина: " + cartCount;
+        });
 
-</section>
+        grid.appendChild(card);
+    });
+}
 
-<footer>
-    © 2026 NovaBox
-</footer>
+document.getElementById("searchInput").addEventListener("input", (event) => {
+    const value = event.target.value.toLowerCase();
+
+    const filtered = products.filter((product) =>
+        product.name.toLowerCase().includes(value) ||
+        product.desc.toLowerCase().includes(value)
+    );
+
+    renderProducts(filtered);
+});
+
+renderProducts(products);
+</script>
 
 </body>
 </html>
