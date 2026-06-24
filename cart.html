@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaBox — корзина</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    background:#050505;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+header{
+    border-bottom:1px solid #222;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    background:#050505;
+    z-index:10;
+}
+
+.logo{
+    font-size:36px;
+    font-weight:800;
+}
+
+.nav{
+    display:flex;
+    gap:20px;
+}
+
+.nav a{
+    color:#bbb;
+    text-decoration:none;
+}
+
+.nav a:hover{
+    color:#fff;
+}
+
+.page{
+    max-width:1100px;
+    margin:0 auto;
+    padding:60px 20px;
+}
+
+.page h1{
+    font-size:48px;
+    margin-bottom:15px;
+}
+
+.page-subtitle{
+    color:#aaa;
+    font-size:18px;
+    margin-bottom:30px;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:24px;
+    align-items:start;
+}
+
+.box{
+    background:#0d0d0d;
+    border:1px solid #222;
+    border-radius:18px;
+    padding:24px;
+}
+
+.cart-list{
+    display:grid;
+    gap:14px;
+}
+
+.cart-empty{
+    color:#888;
+    padding:20px 0;
+}
+
+.cart-item{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:16px;
+    padding:16px 0;
+    border-bottom:1px solid #222;
+}
+
+.cart-item:last-child{
+    border-bottom:none;
+}
+
+.item-title{
+    font-size:18px;
+    font-weight:800;
+    margin-bottom:6px;
+}
+
+.item-meta{
+    color:#aaa;
+    font-size:14px;
+}
+
+.item-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:12px;
+}
+
+.qty-btn{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    border:1px solid #333;
+    background:#151515;
+    color:#fff;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.qty-value{
+    min-width:32px;
+    text-align:center;
+    font-weight:800;
+}
+
+.remove{
+    margin-left:8px;
+    border:1px solid #333;
+    background:#151515;
+    color:#fff;
+    border-radius:10px;
+    padding:8px 12px;
+    cursor:pointer;
+}
+
+.item-price{
+    font-size:20px;
+    font-weight:800;
+    text-align:right;
+}
+
+.total{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    font-size:26px;
+    font-weight:800;
+    padding-bottom:20px;
+    border-bottom:1px solid #222;
+    margin-bottom:20px;
+}
+
+.form{
+    display:grid;
+    gap:12px;
+}
+
+.form label{
+    font-size:14px;
+    color:#bbb;
+}
+
+.form input,
+.form textarea{
+    width:100%;
+    padding:14px 16px;
+    border-radius:12px;
+    border:1px solid #333;
+    background:#111;
+    color:#fff;
+    outline:none;
+}
+
+.form textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.btn{
+    border:none;
+    border-radius:12px;
+    padding:15px 18px;
+    background:#fff;
+    color:#000;
+    font-weight:900;
+    cursor:pointer;
+    width:100%;
+}
+
+.btn:hover{
+    opacity:.86;
+}
+
+.btn-secondary{
+    display:inline-block;
+    margin-top:18px;
+    color:#fff;
+    text-decoration:none;
+    border:1px solid #333;
+    padding:12px 16px;
+    border-radius:12px;
+}
+
+.notice{
+    display:none;
+    margin-bottom:20px;
+    padding:16px;
+    border-radius:14px;
+    background:#102916;
+    color:#a6ffb8;
+    border:1px solid #245c31;
+}
+
+.warning{
+    color:#ffb3b3;
+    font-size:14px;
+    line-height:1.5;
+}
+
+footer{
+    border-top:1px solid #222;
+    text-align:center;
+    padding:30px;
+    color:#777;
+    margin-top:80px;
+}
+
+@media(max-width:850px){
+    header{
+        padding:18px;
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .page h1{
+        font-size:38px;
+    }
+
+    .layout{
+        grid-template-columns:1fr;
+    }
+
+    .cart-item{
+        grid-template-columns:1fr;
+    }
+
+    .item-price{
+        text-align:left;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">NovaBox</div>
+
+    <nav class="nav">
+        <a href="index.html">Каталог</a>
+        <a href="cart.html">Корзина</a>
+    </nav>
+</header>
+
+<main class="page">
+    <h1>Корзина</h1>
+    <p class="page-subtitle">Проверь товары и оформи тестовый заказ.</p>
+
+    <div class="notice" id="successNotice">
+        Заказ отправлен. Если это первый заказ через сервис отправки, проверь почту и подтверди получение.
+    </div>
+
+    <div class="layout">
+        <section class="box">
+            <div id="cartList" class="cart-list"></div>
+            <a class="btn-secondary" href="index.html">Вернуться в каталог</a>
+        </section>
+
+        <aside class="box">
+            <div class="total">
+                <span>Итого</span>
+                <span id="totalPrice">0 ₽</span>
+            </div>
+
+            <form class="form" id="orderForm" method="POST">
+                <input type="hidden" name="_subject" value="Новый заказ NovaBox">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" id="nextUrl">
+                <input type="hidden" name="Состав заказа" id="orderDetails">
+                <input type="hidden" name="Итоговая сумма" id="orderTotal">
+
+                <label>
+                    Ваше имя
+                    <input name="Имя клиента" id="customerName" type="text" placeholder="Иван" required>
+                </label>
+
+                <label>
+                    Телефон
+                    <input name="Телефон" id="customerPhone" type="tel" placeholder="+7 999 123-45-67" required>
+                </label>
+
+                <label>
+                    Адрес доставки
+                    <textarea name="Адрес доставки" id="customerAddress" placeholder="Город, улица, дом, квартира" required></textarea>
+                </label>
+
+                <button class="btn" type="submit">Оформить заказ</button>
+
+                <p class="warning">
+                    Сейчас заказ отправляется в тестовом режиме на почту. Позже подключим нормальную админку, оплату и базу заказов.
+                </p>
+            </form>
+        </aside>
+    </div>
+</main>
+
+<footer>
+    © 2026 NovaBox · novaboxmarket.ru
+</footer>
+
+<script>
+const ORDER_EMAIL = "your-email@example.com";
+
+function getCart(){
+    const raw = localStorage.getItem("novabox_cart");
+
+    if(!raw){
+        return [];
+    }
+
+    try{
+        const cart = JSON.parse(raw);
+        return Array.isArray(cart) ? cart : [];
+    }catch(error){
+        localStorage.removeItem("novabox_cart");
+        return [];
+    }
+}
+
+function saveCart(cart){
+    localStorage.setItem("novabox_cart", JSON.stringify(cart));
+}
+
+function clearCart(){
+    localStorage.removeItem("novabox_cart");
+}
+
+function formatMoney(value){
+    return value.toLocaleString("ru-RU") + " ₽";
+}
+
+function getCartTotal(cart){
+    return cart.reduce((sum,item)=>sum + item.price * item.qty,0);
+}
+
+function renderCart(){
+    const cart = getCart();
+    const list = document.getElementById("cartList");
+    const totalBox = document.getElementById("totalPrice");
+
+    list.innerHTML = "";
+
+    if(cart.length === 0){
+        list.innerHTML = '<div class="cart-empty">Корзина пустая. Вернись в каталог и добавь товары.</div>';
+        totalBox.textContent = "0 ₽";
+        return;
+    }
+
+    cart.forEach(item=>{
+        const row = document.createElement("div");
+        row.className = "cart-item";
+
+        const itemTotal = item.price * item.qty;
+
+        row.innerHTML = `
+            <div>
+                <div class="item-title">${item.name}</div>
+                <div class="item-meta">${formatMoney(item.price)} за 1 шт.</div>
+
+                <div class="item-actions">
+                    <button class="qty-btn" type="button" data-action="minus">−</button>
+                    <span class="qty-value">${item.qty}</span>
+                    <button class="qty-btn" type="button" data-action="plus">+</button>
+                    <button class="remove" type="button">Удалить</button>
+                </div>
+            </div>
+
+            <div class="item-price">${formatMoney(itemTotal)}</div>
+        `;
+
+        row.querySelector('[data-action="minus"]').addEventListener("click",()=>{
+            changeQty(item.id, -1);
+        });
+
+        row.querySelector('[data-action="plus"]').addEventListener("click",()=>{
+            changeQty(item.id, 1);
+        });
+
+        row.querySelector(".remove").addEventListener("click",()=>{
+            removeItem(item.id);
+        });
+
+        list.appendChild(row);
+    });
+
+    totalBox.textContent = formatMoney(getCartTotal(cart));
+}
+
+function changeQty(id, delta){
+    const cart = getCart();
+    const item = cart.find(product=>product.id === id);
+
+    if(!item){
+        return;
+    }
+
+    item.qty += delta;
+
+    const updatedCart = cart.filter(product=>product.qty > 0);
+    saveCart(updatedCart);
+    renderCart();
+}
+
+function removeItem(id){
+    const cart = getCart().filter(item=>item.id !== id);
+    saveCart(cart);
+    renderCart();
+}
+
+function buildOrderText(cart){
+    return cart.map(item=>{
+        const sum = item.price * item.qty;
+        return `${item.name} — ${item.qty} шт. × ${formatMoney(item.price)} = ${formatMoney(sum)}`;
+    }).join("\n");
+}
+
+function setupForm(){
+    const form = document.getElementById("orderForm");
+
+    if(ORDER_EMAIL === "your-email@example.com"){
+        console.warn("Замени ORDER_EMAIL в cart.html на свою почту для заказов.");
+    }
+
+    form.action = "https://formsubmit.co/" + ORDER_EMAIL;
+    document.getElementById("nextUrl").value = window.location.origin + "/cart.html?success=1";
+
+    form.addEventListener("submit",(event)=>{
+        const cart = getCart();
+
+        if(cart.length === 0){
+            event.preventDefault();
+            alert("Корзина пустая.");
+            return;
+        }
+
+        if(ORDER_EMAIL === "your-email@example.com"){
+            event.preventDefault();
+            alert("Сначала замени ORDER_EMAIL в cart.html на свою почту для заказов.");
+            return;
+        }
+
+        const total = getCartTotal(cart);
+
+        document.getElementById("orderDetails").value = buildOrderText(cart);
+        document.getElementById("orderTotal").value = formatMoney(total);
+
+        clearCart();
+    });
+}
+
+function checkSuccess(){
+    const params = new URLSearchParams(window.location.search);
+
+    if(params.get("success") === "1"){
+        document.getElementById("successNotice").style.display = "block";
+    }
+}
+
+checkSuccess();
+renderCart();
+setupForm();
+</script>
+
+</body>
+</html>
