@@ -194,6 +194,12 @@ header{
     margin-bottom:3px;
 }
 
+.actions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+}
+
 .btn{
     border:none;
     border-radius:12px;
@@ -202,6 +208,8 @@ header{
     color:#000;
     font-weight:800;
     cursor:pointer;
+    text-align:center;
+    text-decoration:none;
 }
 
 .btn:hover{
@@ -212,6 +220,12 @@ header{
     background:#333;
     color:#888;
     cursor:not-allowed;
+}
+
+.btn-outline{
+    border:1px solid #333;
+    background:#151515;
+    color:#fff;
 }
 
 .empty-result{
@@ -555,12 +569,15 @@ function renderProducts(){
                 ${product.oldPrice ? `<div class="old-price">${formatMoney(product.oldPrice)}</div>` : ""}
             </div>
 
-            <button class="btn" type="button" ${product.stock <= 0 ? "disabled" : ""}>
-                ${product.stock <= 0 ? "Нет в наличии" : "В корзину"}
-            </button>
+            <div class="actions">
+                <a class="btn btn-outline" href="product.html?id=${product.id}">Подробнее</a>
+                <button class="btn" type="button" ${product.stock <= 0 ? "disabled" : ""}>
+                    ${product.stock <= 0 ? "Нет в наличии" : "В корзину"}
+                </button>
+            </div>
         `;
 
-        card.querySelector(".btn").addEventListener("click",()=>addToCart(product));
+        card.querySelector("button.btn").addEventListener("click",()=>addToCart(product));
         grid.appendChild(card);
     });
 }
