@@ -1,4 +1,4 @@
-const NOVABOX_PRODUCTS = [
+window.NOVABOX_PRODUCTS = [
     {
         id: 1,
         sku: "LED-001",
