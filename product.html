@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaBox — товар</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    background:#050505;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+header{
+    border-bottom:1px solid #222;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    background:#050505;
+    z-index:10;
+}
+
+.logo{
+    font-size:36px;
+    font-weight:800;
+}
+
+.nav{
+    display:flex;
+    gap:20px;
+}
+
+.nav a{
+    color:#bbb;
+    text-decoration:none;
+}
+
+.nav a:hover{
+    color:#fff;
+}
+
+.page{
+    max-width:1150px;
+    margin:0 auto;
+    padding:60px 20px;
+}
+
+.back-link{
+    display:inline-block;
+    color:#aaa;
+    text-decoration:none;
+    margin-bottom:24px;
+}
+
+.back-link:hover{
+    color:#fff;
+}
+
+.product-layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px;
+    align-items:start;
+}
+
+.gallery{
+    background:#0d0d0d;
+    border:1px solid #222;
+    border-radius:22px;
+    padding:20px;
+}
+
+.main-image{
+    height:430px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#1a1a1a,#333);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#777;
+    overflow:hidden;
+    font-size:18px;
+}
+
+.main-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.info{
+    background:#0d0d0d;
+    border:1px solid #222;
+    border-radius:22px;
+    padding:28px;
+}
+
+.category{
+    display:inline-block;
+    border:1px solid #333;
+    color:#bbb;
+    padding:8px 12px;
+    border-radius:999px;
+    font-size:14px;
+    margin-bottom:16px;
+}
+
+h1{
+    font-size:44px;
+    line-height:1.1;
+    margin-bottom:14px;
+}
+
+.sku{
+    color:#777;
+    font-size:14px;
+    margin-bottom:22px;
+}
+
+.desc{
+    color:#cfcfcf;
+    line-height:1.6;
+    font-size:17px;
+    margin-bottom:24px;
+}
+
+.stock-ok{
+    color:#a6ffb8;
+    font-weight:800;
+}
+
+.stock-empty{
+    color:#ff9c9c;
+    font-weight:800;
+}
+
+.price-row{
+    display:flex;
+    align-items:flex-end;
+    gap:14px;
+    margin:24px 0;
+}
+
+.price{
+    font-size:36px;
+    font-weight:900;
+}
+
+.old-price{
+    color:#777;
+    text-decoration:line-through;
+    font-size:18px;
+    margin-bottom:5px;
+}
+
+.btn{
+    border:none;
+    border-radius:14px;
+    padding:16px 20px;
+    background:#fff;
+    color:#000;
+    font-weight:900;
+    cursor:pointer;
+    width:100%;
+    font-size:16px;
+}
+
+.btn:hover{
+    opacity:.86;
+}
+
+.btn:disabled{
+    background:#333;
+    color:#888;
+    cursor:not-allowed;
+}
+
+.details{
+    margin-top:26px;
+    padding-top:22px;
+    border-top:1px solid #222;
+    display:grid;
+    gap:12px;
+}
+
+.detail-row{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    color:#aaa;
+}
+
+.detail-row strong{
+    color:#fff;
+}
+
+.not-found{
+    border:1px solid #222;
+    background:#0d0d0d;
+    border-radius:18px;
+    padding:30px;
+    color:#aaa;
+}
+
+.cart-float{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:#fff;
+    color:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    box-shadow:0 12px 35px rgba(0,0,0,.45);
+    z-index:50;
+}
+
+.cart-float svg{
+    width:30px;
+    height:30px;
+}
+
+.cart-count{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    min-width:24px;
+    height:24px;
+    padding:0 6px;
+    border-radius:999px;
+    background:#ff3b3b;
+    color:#fff;
+    font-size:13px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid #050505;
+}
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:100px;
+    transform:translateX(-50%);
+    background:#fff;
+    color:#000;
+    padding:14px 18px;
+    border-radius:12px;
+    font-weight:800;
+    display:none;
+    z-index:60;
+}
+
+.footer-links{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+}
+
+.footer-links a{
+    color:#aaa;
+    text-decoration:none;
+}
+
+.footer-links a:hover{
+    color:#fff;
+}
+
+footer{
+    border-top:1px solid #222;
+    text-align:center;
+    padding:30px;
+    color:#777;
+    margin-top:80px;
+}
+
+@media(max-width:850px){
+    header{
+        padding:18px;
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .product-layout{
+        grid-template-columns:1fr;
+    }
+
+    .main-image{
+        height:300px;
+    }
+
+    h1{
+        font-size:34px;
+    }
+
+    .price{
+        font-size:30px;
+    }
+
+    .detail-row{
+        flex-direction:column;
+        gap:4px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">NovaBox</div>
+
+    <nav class="nav">
+        <a href="index.html">Каталог</a>
+        <a href="cart.html">Корзина</a>
+        <a href="privacy.html">Политика</a>
+    </nav>
+</header>
+
+<main class="page">
+    <a class="back-link" href="index.html">← Вернуться в каталог</a>
+
+    <div id="productRoot"></div>
+</main>
+
+<a class="cart-float" href="cart.html" aria-label="Открыть корзину">
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M7 7h14l-2 8H9L7 7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M7 7 6.2 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="10" cy="20" r="1.5" fill="currentColor"/>
+        <circle cx="18" cy="20" r="1.5" fill="currentColor"/>
+    </svg>
+    <span class="cart-count" id="cartCount">0</span>
+</a>
+
+<div class="toast" id="toast">Товар добавлен в корзину</div>
+
+<footer>
+    <div class="footer-links">
+        <a href="privacy.html">Политика обработки персональных данных</a>
+        <a href="consent.html">Согласие на обработку персональных данных</a>
+    </div>
+    © 2026 NovaBox · novaboxmarket.ru
+</footer>
+
+<script src="products.js"></script>
+
+<script>
+function getAllProducts(){
+    if(!Array.isArray(window.NOVABOX_PRODUCTS)){
+        return [];
+    }
+
+    return window.NOVABOX_PRODUCTS;
+}
+
+function isProductActive(product){
+    return product && product.status === "active";
+}
+
+function getProducts(){
+    return getAllProducts().filter(isProductActive);
+}
+
+function getProductIdFromUrl(){
+    const params = new URLSearchParams(window.location.search);
+    return Number(params.get("id"));
+}
+
+function findProduct(){
+    const id = getProductIdFromUrl();
+
+    if(!id){
+        return null;
+    }
+
+    return getProducts().find(product => Number(product.id) === id) || null;
+}
+
+function getCart(){
+    const raw = localStorage.getItem("novabox_cart");
+
+    if(!raw){
+        return [];
+    }
+
+    try{
+        const parsed = JSON.parse(raw);
+
+        if(!Array.isArray(parsed)){
+            return [];
+        }
+
+        return parsed.map(item => ({
+            id: Number(item.id),
+            qty: Math.max(1, Number(item.qty) || 1)
+        })).filter(item => item.id > 0);
+    }catch(error){
+        localStorage.removeItem("novabox_cart");
+        return [];
+    }
+}
+
+function saveCart(cart){
+    localStorage.setItem("novabox_cart", JSON.stringify(cart));
+}
+
+function updateCartCount(){
+    const products = getProducts();
+    const cart = getCart().filter(item => products.some(product => product.id === item.id));
+    const count = cart.reduce((sum,item)=>sum + item.qty,0);
+
+    saveCart(cart);
+    document.getElementById("cartCount").textContent = count;
+}
+
+function showToast(text){
+    const toast = document.getElementById("toast");
+    toast.textContent = text;
+    toast.style.display = "block";
+
+    setTimeout(()=>{
+        toast.style.display = "none";
+    },1200);
+}
+
+function addToCart(product){
+    if(!isProductActive(product)){
+        showToast("Товар недоступен");
+        return;
+    }
+
+    if(product.stock <= 0){
+        showToast("Товара нет в наличии");
+        return;
+    }
+
+    const cart = getCart();
+    const existing = cart.find(item=>item.id === product.id);
+
+    if(existing){
+        if(existing.qty >= product.stock){
+            showToast("Больше нет на складе");
+            return;
+        }
+
+        existing.qty++;
+    }else{
+        cart.push({id:product.id, qty:1});
+    }
+
+    saveCart(cart);
+    updateCartCount();
+    showToast("Товар добавлен в корзину");
+}
+
+function formatMoney(value){
+    return Number(value).toLocaleString("ru-RU") + " ₽";
+}
+
+function createImageHtml(product){
+    if(product.image){
+        return `<img src="${product.image}" alt="${product.name}">`;
+    }
+
+    return "Фото товара";
+}
+
+function renderNotFound(){
+    document.getElementById("productRoot").innerHTML = `
+        <div class="not-found">
+            Товар не найден или временно недоступен.
+            <br><br>
+            <a class="back-link" href="index.html">Вернуться в каталог</a>
+        </div>
+    `;
+}
+
+function renderProduct(){
+    const product = findProduct();
+
+    if(!product){
+        renderNotFound();
+        updateCartCount();
+        return;
+    }
+
+    document.title = "NovaBox — " + product.name;
+
+    const stockClass = product.stock > 0 ? "stock-ok" : "stock-empty";
+    const stockText = product.stock > 0 ? `В наличии: ${product.stock} шт.` : "Нет в наличии";
+
+    document.getElementById("productRoot").innerHTML = `
+        <section class="product-layout">
+            <div class="gallery">
+                <div class="main-image">${createImageHtml(product)}</div>
+            </div>
+
+            <div class="info">
+                <div class="category">${product.category}</div>
+
+                <h1>${product.name}</h1>
+
+                <div class="sku">Артикул: ${product.sku}</div>
+
+                <p class="desc">${product.desc}</p>
+
+                <div class="${stockClass}">${stockText}</div>
+
+                <div class="price-row">
+                    <div class="price">${formatMoney(product.price)}</div>
+                    ${product.oldPrice ? `<div class="old-price">${formatMoney(product.oldPrice)}</div>` : ""}
+                </div>
+
+                <button class="btn" id="addToCartButton" type="button" ${product.stock <= 0 ? "disabled" : ""}>
+                    ${product.stock <= 0 ? "Нет в наличии" : "Добавить в корзину"}
+                </button>
+
+                <div class="details">
+                    <div class="detail-row">
+                        <span>Категория</span>
+                        <strong>${product.category}</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Бренд</span>
+                        <strong>${product.brand || "NovaBox"}</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Артикул NovaBox</span>
+                        <strong>${product.sku}</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Артикул поставщика</span>
+                        <strong>${product.supplierSku || "Не указан"}</strong>
+                    </div>
+
+                    <div class="detail-row">
+                        <span>Обновлено</span>
+                        <strong>${product.updatedAt || "Не указано"}</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `;
+
+    const button = document.getElementById("addToCartButton");
+
+    if(button){
+        button.addEventListener("click",()=>addToCart(product));
+    }
+
+    updateCartCount();
+}
+
+renderProduct();
+</script>
+
+</body>
+</html>
